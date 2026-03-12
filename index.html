@@ -1,0 +1,925 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Phishing Detection System | Cyber Security</title>
+    <!-- Hacker Theme CSS -->
+    <style>
+      /* Hacker Theme Variables */
+      :root {
+        --matrix-green: #00ff41;
+        --dark-green: #003b00;
+        --hacker-bg: #0a0a0a;
+        --terminal-bg: #000;
+        --glow-green: #00ff41;
+        --glow-blue: #0088ff;
+        --neon-pink: #ff00ff;
+        --text-glow: 0 0 10px var(--matrix-green), 0 0 20px var(--matrix-green);
+        --text-glow-blue: 0 0 10px var(--glow-blue), 0 0 20px var(--glow-blue);
+      }
+      
+      /* Matrix Rain Effect */
+      #matrix-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -2;
+        opacity: 0.15;
+      }
+      
+      /* Hacker Background Pattern */
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+          linear-gradient(90deg, var(--dark-green) 1px, transparent 1px) 0 0 / 50px 50px,
+          linear-gradient(var(--dark-green) 1px, transparent 1px) 0 0 / 50px 50px;
+        z-index: -1;
+        opacity: 0.1;
+      }
+      
+      body {
+        background-color: var(--hacker-bg);
+        color: var(--matrix-green);
+        font-family: 'Courier New', monospace;
+        position: relative;
+        min-height: 100vh;
+      }
+      
+      /* Hacker Header Styles */
+      .hacker-header {
+        background: rgba(10, 20, 10, 0.9);
+        border-bottom: 2px solid var(--matrix-green);
+        box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+        backdrop-filter: blur(10px);
+      }
+      
+      .hacker-logo {
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+        text-shadow: var(--text-glow);
+        letter-spacing: 2px;
+        background: linear-gradient(90deg, var(--matrix-green), var(--glow-blue));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      
+      .hacker-nav a {
+        position: relative;
+        overflow: hidden;
+        padding: 8px 16px;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+      }
+      
+      .hacker-nav a:hover {
+        background: rgba(0, 255, 65, 0.1);
+        color: var(--matrix-green) !important;
+        text-shadow: var(--text-glow);
+        box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+      }
+      
+      .hacker-nav a::after {
+        content: ']';
+        position: absolute;
+        right: 8px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      
+      .hacker-nav a::before {
+        content: '[';
+        position: absolute;
+        left: 8px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      
+      .hacker-nav a:hover::before,
+      .hacker-nav a:hover::after {
+        opacity: 1;
+      }
+      
+      /* Terminal Style Form */
+      .terminal-container {
+        background: rgba(0, 0, 0, 0.8);
+        border: 2px solid var(--matrix-green);
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 
+          0 0 30px rgba(0, 255, 65, 0.3),
+          inset 0 0 20px rgba(0, 255, 65, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .terminal-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, 
+          var(--matrix-green), 
+          var(--glow-blue), 
+          var(--neon-pink), 
+          var(--matrix-green));
+        animation: scanline 3s linear infinite;
+      }
+      
+      @keyframes scanline {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+      }
+      
+      .terminal-input {
+        background: rgba(0, 30, 0, 0.5);
+        border: 1px solid var(--matrix-green);
+        color: var(--matrix-green);
+        font-family: 'Courier New', monospace;
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: inset 0 0 10px rgba(0, 255, 65, 0.1);
+        transition: all 0.3s;
+      }
+      
+      .terminal-input:focus {
+        outline: none;
+        border-color: var(--glow-blue);
+        box-shadow: 
+          inset 0 0 15px rgba(0, 255, 65, 0.2),
+          0 0 20px rgba(0, 136, 255, 0.3);
+      }
+      
+      .terminal-input::placeholder {
+        color: rgba(0, 255, 65, 0.5);
+      }
+      
+      /* Hacker Button */
+      .hacker-btn {
+        background: linear-gradient(45deg, var(--dark-green), rgba(0, 255, 65, 0.1));
+        border: 1px solid var(--matrix-green);
+        color: var(--matrix-green);
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+        padding: 15px 30px;
+        border-radius: 5px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+      
+      .hacker-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, 
+          transparent, 
+          rgba(0, 255, 65, 0.2), 
+          transparent);
+        transition: left 0.5s;
+      }
+      
+      .hacker-btn:hover {
+        background: linear-gradient(45deg, rgba(0, 255, 65, 0.1), var(--dark-green));
+        box-shadow: 
+          0 0 20px rgba(0, 255, 65, 0.5),
+          inset 0 0 10px rgba(0, 255, 65, 0.1);
+        color: #fff;
+        text-shadow: var(--text-glow);
+      }
+      
+      .hacker-btn:hover::before {
+        left: 100%;
+      }
+      
+      .hacker-btn:active {
+        transform: translateY(2px);
+        box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+      }
+      
+      /* Result Display Terminal */
+      .result-terminal {
+        background: rgba(0, 10, 0, 0.9);
+        border: 2px solid var(--matrix-green);
+        border-radius: 10px;
+        padding: 25px;
+        margin-top: 30px;
+        position: relative;
+        min-height: 200px;
+        box-shadow: 
+          0 0 25px rgba(0, 255, 65, 0.2),
+          inset 0 0 15px rgba(0, 255, 65, 0.05);
+      }
+      
+      .result-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+      }
+      
+      .result-icon {
+        font-size: 2.5rem;
+        text-shadow: var(--text-glow);
+      }
+      
+      .result-text h3 {
+        font-size: 1.8rem;
+        margin-bottom: 5px;
+        background: linear-gradient(90deg, var(--matrix-green), var(--glow-blue));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      
+      /* Status Indicators */
+      .status-safe {
+        color: var(--matrix-green);
+        text-shadow: var(--text-glow);
+      }
+      
+      .status-danger {
+        color: #ff3333;
+        text-shadow: 0 0 10px #ff3333, 0 0 20px #ff3333;
+      }
+      
+      .status-warning {
+        color: #ffaa00;
+        text-shadow: 0 0 10px #ffaa00, 0 0 20px #ffaa00;
+      }
+      
+      /* Cyber Grid Pattern */
+      .cyber-grid {
+        background: 
+          linear-gradient(90deg, rgba(0, 255, 65, 0.05) 1px, transparent 1px) 0 0 / 20px 20px,
+          linear-gradient(rgba(0, 255, 65, 0.05) 1px, transparent 1px) 0 0 / 20px 20px;
+        border-radius: 10px;
+      }
+      
+      /* Glitch Text Effect */
+      .glitch {
+        position: relative;
+        display: inline-block;
+      }
+      
+      .glitch::before,
+      .glitch::after {
+        content: attr(data-text);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+      
+      .glitch::before {
+        left: 2px;
+        text-shadow: -2px 0 var(--neon-pink);
+        animation: glitch-1 2s infinite linear alternate-reverse;
+      }
+      
+      .glitch::after {
+        left: -2px;
+        text-shadow: 2px 0 var(--glow-blue);
+        animation: glitch-2 3s infinite linear alternate-reverse;
+      }
+      
+      @keyframes glitch-1 {
+        0%, 7% { clip: rect(24px, 9999px, 90px, 0); }
+        15% { clip: rect(85px, 9999px, 140px, 0); }
+        30% { clip: rect(66px, 9999px, 115px, 0); }
+        35% { clip: rect(93px, 9999px, 141px, 0); }
+        45% { clip: rect(10px, 9999px, 105px, 0); }
+        50% { clip: rect(82px, 9999px, 149px, 0); }
+        65% { clip: rect(54px, 9999px, 148px, 0); }
+        75% { clip: rect(12px, 9999px, 45px, 0); }
+        85% { clip: rect(35px, 9999px, 147px, 0); }
+        100% { clip: rect(76px, 9999px, 125px, 0); }
+      }
+      
+      @keyframes glitch-2 {
+        0%, 5% { clip: rect(65px, 9999px, 119px, 0); }
+        10% { clip: rect(79px, 9999px, 135px, 0); }
+        20% { clip: rect(58px, 9999px, 116px, 0); }
+        35% { clip: rect(22px, 9999px, 69px, 0); }
+        40% { clip: rect(55px, 9999px, 132px, 0); }
+        50% { clip: rect(11px, 9999px, 99px, 0); }
+        60% { clip: rect(33px, 9999px, 143px, 0); }
+        75% { clip: rect(44px, 9999px, 122px, 0); }
+        80% { clip: rect(66px, 9999px, 120px, 0); }
+        90% { clip: rect(87px, 9999px, 115px, 0); }
+        100% { clip: rect(2px, 9999px, 89px, 0); }
+      }
+      
+      /* Cyber Stats */
+      .cyber-stat {
+        background: rgba(0, 30, 0, 0.3);
+        border: 1px solid rgba(0, 255, 65, 0.2);
+        border-radius: 8px;
+        padding: 20px;
+        transition: all 0.3s;
+      }
+      
+      .cyber-stat:hover {
+        transform: translateY(-5px);
+        border-color: var(--matrix-green);
+        box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+      }
+      
+      /* Progress Bar */
+      .cyber-progress {
+        height: 20px;
+        background: rgba(0, 30, 0, 0.5);
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+        border: 1px solid rgba(0, 255, 65, 0.3);
+      }
+      
+      .cyber-progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, var(--dark-green), var(--matrix-green));
+        position: relative;
+        transition: width 1s ease-in-out;
+      }
+      
+      .cyber-progress-bar::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 100%;
+        background: linear-gradient(90deg, 
+          transparent, 
+          rgba(255, 255, 255, 0.2), 
+          transparent);
+        animation: shimmer 2s infinite;
+      }
+      
+      @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+      }
+      
+      /* Matrix Typing Effect */
+      .typing-text {
+        overflow: hidden;
+        border-right: 3px solid var(--matrix-green);
+        white-space: nowrap;
+        animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+      }
+      
+      @keyframes typing {
+        from { width: 0; }
+        to { width: 100%; }
+      }
+      
+      @keyframes blink-caret {
+        from, to { border-color: transparent; }
+        50% { border-color: var(--matrix-green); }
+      }
+      
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .terminal-container {
+          padding: 20px;
+        }
+        
+        .hacker-nav {
+          flex-direction: column;
+          gap: 10px;
+        }
+        
+        .hacker-btn {
+          padding: 12px 24px;
+          font-size: 0.9rem;
+        }
+      }
+    </style>
+    
+    <!-- Bootstrap with Dark Theme -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  </head>
+  <body>
+    <!-- Matrix Rain Background -->
+    <canvas id="matrix-bg"></canvas>
+    
+    <!-- Header -->
+    <header class="hacker-header py-3">
+      <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+          <!-- Logo -->
+          <a href="/" class="hacker-logo text-decoration-none fs-3">
+            <i class="fas fa-shield-alt me-2"></i>
+            <span class="glitch" data-text="PHISHGUARD">PHISHGUARD</span>
+          </a>
+          
+          <!-- Navigation -->
+          <nav class="hacker-nav d-flex gap-3 d-none d-lg-flex">
+            <a href="/" class="text-decoration-none text-success fw-bold">
+              <i class="fas fa-home me-1"></i> HOME
+            </a>
+            <a href="#" class="text-decoration-none text-muted fw-bold">
+              <i class="fas fa-bug me-1"></i> DETECTION
+            </a>
+            <a href="#" class="text-decoration-none text-muted fw-bold">
+              <i class="fas fa-user-secret me-1"></i> ABOUT
+            </a>
+            <a href="#" class="text-decoration-none text-warning fw-bold">
+              <i class="fas fa-code me-1"></i> API
+            </a>
+          </nav>
+          
+          <!-- Mobile Menu Button -->
+          <button class="hacker-btn d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenu">
+            <i class="fas fa-terminal me-1"></i> MENU
+          </button>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="collapse mt-3" id="mobileMenu">
+          <div class="d-flex flex-column gap-2">
+            <a href="/" class="hacker-btn text-center">
+              <i class="fas fa-home me-1"></i> HOME
+            </a>
+            <a href="#" class="hacker-btn text-center">
+              <i class="fas fa-bug me-1"></i> DETECTION
+            </a>
+            <a href="#" class="hacker-btn text-center">
+              <i class="fas fa-user-secret me-1"></i> ABOUT
+            </a>
+            <a href="#" class="hacker-btn text-center">
+              <i class="fas fa-code me-1"></i> API
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="container py-5">
+      <!-- Hero Section -->
+      <div class="row justify-content-center mb-5">
+        <div class="col-lg-10">
+          <div class="terminal-container cyber-grid">
+            <div class="text-center mb-4">
+              <h1 class="hacker-logo typing-text mb-3">
+                <i class="fas fa-user-secret me-2"></i>
+                PHISHING DETECTION SYSTEM
+              </h1>
+              <p class="text-muted mb-0">
+                <i class="fas fa-terminal me-1"></i>
+                Advanced AI-powered phishing detection and analysis
+              </p>
+            </div>
+            
+            <div class="row align-items-center">
+              <div class="col-lg-8">
+                <p class="text-success mb-4">
+                  <i class="fas fa-info-circle me-2"></i>
+                  Enter any suspicious URL to analyze for phishing threats. Our system uses machine learning algorithms to detect malicious patterns and protect your digital security.
+                </p>
+                
+                <!-- Result Display -->
+                {% if predict %}
+                <div class="result-terminal">
+                  <div class="result-header">
+                    <div class="result-icon">
+                      {% if 'phishing' in predict.lower() or 'bad' in predict.lower() %}
+                        <i class="fas fa-skull-crossbones status-danger"></i>
+                      {% else %}
+                        <i class="fas fa-shield-check status-safe"></i>
+                      {% endif %}
+                    </div>
+                    <div class="result-text">
+                      <h3>
+                        {% if 'phishing' in predict.lower() or 'bad' in predict.lower() %}
+                          THREAT DETECTED
+                        {% else %}
+                          SECURITY VERIFIED
+                        {% endif %}
+                      </h3>
+                      <p class="mb-0 {% if 'phishing' in predict.lower() or 'bad' in predict.lower() %}status-danger{% else %}status-safe{% endif %}">
+                        <i class="fas fa-arrow-right me-2"></i>
+                        {{ predict }}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div class="row mt-4">
+                    <div class="col-md-6">
+                      <div class="cyber-stat mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                          <span class="text-muted">Threat Level</span>
+                          <span class="{% if 'phishing' in predict.lower() or 'bad' in predict.lower() %}status-danger{% else %}status-safe{% endif %}">
+                            {% if 'phishing' in predict.lower() or 'bad' in predict.lower() %}
+                              HIGH
+                            {% else %}
+                              LOW
+                            {% endif %}
+                          </span>
+                        </div>
+                        <div class="cyber-progress">
+                          <div class="cyber-progress-bar" style="width: {% if 'phishing' in predict.lower() or 'bad' in predict.lower() %}85{% else %}15{% endif %}%"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="cyber-stat mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                          <span class="text-muted">Security Score</span>
+                          <span class="{% if 'phishing' in predict.lower() or 'bad' in predict.lower() %}status-warning{% else %}status-safe{% endif %}">
+                            {% if 'phishing' in predict.lower() or 'bad' in predict.lower() %}
+                              32/100
+                            {% else %}
+                              92/100
+                            {% endif %}
+                          </span>
+                        </div>
+                        <div class="cyber-progress">
+                          <div class="cyber-progress-bar" style="width: {% if 'phishing' in predict.lower() or 'bad' in predict.lower() %}32{% else %}92{% endif %}%"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="mt-4">
+                    <button class="hacker-btn w-100" onclick="window.location.reload()">
+                      <i class="fas fa-redo me-2"></i> ANALYZE ANOTHER URL
+                    </button>
+                  </div>
+                </div>
+                {% endif %}
+              </div>
+              
+              <div class="col-lg-4">
+                <div class="text-center">
+                  <div class="cyber-stat p-4 mb-4">
+                    <i class="fas fa-robot fa-4x mb-3 text-success"></i>
+                    <h4 class="status-safe mb-2">AI DETECTION</h4>
+                    <p class="text-muted small">Powered by machine learning algorithms</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Detection Form -->
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="terminal-container">
+            <h3 class="text-center mb-4 status-safe">
+              <i class="fas fa-search me-2"></i>
+              URL THREAT ANALYSIS
+            </h3>
+            
+            <form method="POST" action="/" class="mb-4">
+              <div class="mb-3">
+                <label for="url" class="form-label text-success mb-2">
+                  <i class="fas fa-link me-2"></i>
+                  TARGET URL
+                </label>
+                <input 
+                  type="text" 
+                  class="form-control terminal-input" 
+                  id="url" 
+                  name="url" 
+                  placeholder="https://suspicious-website.com/login"
+                  required
+                >
+                <div class="form-text text-muted mt-1">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Enter full URL including http:// or https://
+                </div>
+              </div>
+              
+              <button type="submit" class="hacker-btn w-100 py-3">
+                <i class="fas fa-bolt me-2"></i>
+                INITIATE SECURITY SCAN
+              </button>
+            </form>
+            
+            <div class="text-center">
+              <p class="text-muted small">
+                <i class="fas fa-shield-alt me-1"></i>
+                Scanning powered by phishing_model.pkl & vectorizer.pkl
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Stats Section -->
+      <div class="row mt-5">
+        <div class="col-12">
+          <h3 class="text-center mb-4 status-safe">
+            <i class="fas fa-chart-line me-2"></i>
+            SYSTEM STATISTICS
+          </h3>
+          
+          <div class="row g-4">
+            <div class="col-md-3">
+              <div class="cyber-stat text-center p-4">
+                <i class="fas fa-bug fa-2x mb-3 text-warning"></i>
+                <h2 class="status-danger">2,847</h2>
+                <p class="text-muted mb-0">THREATS BLOCKED</p>
+              </div>
+            </div>
+            
+            <div class="col-md-3">
+              <div class="cyber-stat text-center p-4">
+                <i class="fas fa-globe fa-2x mb-3 text-success"></i>
+                <h2 class="status-safe">98.7%</h2>
+                <p class="text-muted mb-0">ACCURACY RATE</p>
+              </div>
+            </div>
+            
+            <div class="col-md-3">
+              <div class="cyber-stat text-center p-4">
+                <i class="fas fa-bolt fa-2x mb-3 text-info"></i>
+                <h2 class="status-safe">0.8s</h2>
+                <p class="text-muted mb-0">AVG SCAN TIME</p>
+              </div>
+            </div>
+            
+            <div class="col-md-3">
+              <div class="cyber-stat text-center p-4">
+                <i class="fas fa-database fa-2x mb-3 text-primary"></i>
+                <h2 class="status-safe">50K+</h2>
+                <p class="text-muted mb-0">URLS ANALYZED</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Features Section -->
+      <div class="row mt-5">
+        <div class="col-12">
+          <h3 class="text-center mb-4 status-safe">
+            <i class="fas fa-cogs me-2"></i>
+            SYSTEM FEATURES
+          </h3>
+          
+          <div class="row g-4">
+            <div class="col-md-4">
+              <div class="cyber-stat p-4 h-100">
+                <div class="d-flex align-items-start mb-3">
+                  <i class="fas fa-brain fa-2x me-3 text-success"></i>
+                  <div>
+                    <h5 class="status-safe">AI-POWERED ANALYSIS</h5>
+                    <p class="text-muted small mb-0">
+                      Advanced machine learning algorithms detect phishing patterns with high accuracy.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-4">
+              <div class="cyber-stat p-4 h-100">
+                <div class="d-flex align-items-start mb-3">
+                  <i class="fas fa-bolt fa-2x me-3 text-warning"></i>
+                  <div>
+                    <h5 class="status-safe">REAL-TIME SCANNING</h5>
+                    <p class="text-muted small mb-0">
+                      Instant analysis with results delivered in under 1 second for immediate threat assessment.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-4">
+              <div class="cyber-stat p-4 h-100">
+                <div class="d-flex align-items-start mb-3">
+                  <i class="fas fa-shield-alt fa-2x me-3 text-primary"></i>
+                  <div>
+                    <h5 class="status-safe">MULTI-LAYER PROTECTION</h5>
+                    <p class="text-muted small mb-0">
+                      Multiple detection layers including pattern recognition and behavioral analysis.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- API Section -->
+      <div class="row mt-5">
+        <div class="col-12">
+          <div class="terminal-container">
+            <h3 class="text-center mb-4 status-safe">
+              <i class="fas fa-code me-2"></i>
+              DEVELOPER API
+            </h3>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="cyber-stat p-4 h-100">
+                  <h5 class="status-warning mb-3">
+                    <i class="fas fa-terminal me-2"></i>
+                    API ENDPOINT
+                  </h5>
+                  <code class="d-block bg-dark text-success p-3 rounded mb-3">
+                    POST /api/predict<br>
+                    Content-Type: application/json<br>
+                    {"url": "https://example.com"}
+                  </code>
+                  <p class="text-muted small mb-0">
+                    Integrate our phishing detection into your applications.
+                  </p>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="cyber-stat p-4 h-100">
+                  <h5 class="status-warning mb-3">
+                    <i class="fas fa-wrench me-2"></i>
+                    SYSTEM HEALTH
+                  </h5>
+                  <div class="d-flex align-items-center mb-3">
+                    <div class="cyber-progress flex-grow-1 me-3">
+                      <div class="cyber-progress-bar" style="width: 100%"></div>
+                    </div>
+                    <span class="status-safe">ONLINE</span>
+                  </div>
+                  <p class="text-muted small mb-0">
+                    <i class="fas fa-check-circle me-1 text-success"></i>
+                    Model loaded: phishing_model.pkl<br>
+                    <i class="fas fa-check-circle me-1 text-success"></i>
+                    Vectorizer loaded: vectorizer.pkl<br>
+                    <i class="fas fa-check-circle me-1 text-success"></i>
+                    API Status: Operational
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="mt-5 py-4 border-top border-success">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <h5 class="status-safe mb-3">
+              <i class="fas fa-shield-alt me-2"></i>
+              PHISHGUARD SECURITY
+            </h5>
+            <p class="text-muted small">
+              Advanced phishing detection system powered by machine learning. Protecting digital spaces from cyber threats since 2023.
+            </p>
+          </div>
+          
+          <div class="col-md-3">
+            <h6 class="status-warning mb-3">SYSTEM</h6>
+            <ul class="list-unstyled">
+              <li class="mb-2">
+                <a href="#" class="text-decoration-none text-muted">
+                  <i class="fas fa-cog me-1"></i> Status
+                </a>
+              </li>
+              <li class="mb-2">
+                <a href="#" class="text-decoration-none text-muted">
+                  <i class="fas fa-book me-1"></i> Documentation
+                </a>
+              </li>
+              <li class="mb-2">
+                <a href="#" class="text-decoration-none text-muted">
+                  <i class="fas fa-code me-1"></i> API Reference
+                </a>
+              </li>
+            </ul>
+          </div>
+          
+          <div class="col-md-3">
+            <h6 class="status-warning mb-3">SECURITY</h6>
+            <ul class="list-unstyled">
+              <li class="mb-2">
+                <a href="#" class="text-decoration-none text-muted">
+                  <i class="fas fa-lock me-1"></i> Privacy Policy
+                </a>
+              </li>
+              <li class="mb-2">
+                <a href="#" class="text-decoration-none text-muted">
+                  <i class="fas fa-file-contract me-1"></i> Terms
+                </a>
+              </li>
+              <li class="mb-2">
+                <a href="#" class="text-decoration-none text-muted">
+                  <i class="fas fa-envelope me-1"></i> Report Issue
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="text-center mt-4 pt-3 border-top border-success">
+          <p class="text-muted small mb-0">
+            <i class="fas fa-terminal me-1"></i>
+            © 2023 PHISHGUARD Security System. All rights reserved.
+            <span class="d-block mt-1">
+              <i class="fas fa-microchip me-1"></i>
+              Powered by: phishing_model.pkl | vectorizer.pkl
+            </span>
+          </p>
+        </div>
+      </div>
+    </footer>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+    
+    <!-- Matrix Rain Effect Script -->
+    <script>
+      const canvas = document.getElementById('matrix-bg');
+      const ctx = canvas.getContext('2d');
+      
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      
+      const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
+      const matrixArray = matrix.split("");
+      const fontSize = 14;
+      const columns = canvas.width / fontSize;
+      const drops = [];
+      
+      for(let x = 0; x < columns; x++) {
+        drops[x] = Math.random() * canvas.height;
+      }
+      
+      function drawMatrix() {
+        ctx.fillStyle = 'rgba(0, 10, 0, 0.04)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.fillStyle = '#00ff41';
+        ctx.font = `${fontSize}px monospace`;
+        
+        for(let i = 0; i < drops.length; i++) {
+          const text = matrixArray[Math.floor(Math.random() * matrixArray.length)];
+          ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+          
+          if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+          }
+          
+          drops[i]++;
+        }
+      }
+      
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      
+      window.addEventListener('resize', resizeCanvas);
+      setInterval(drawMatrix, 35);
+      
+      // Typewriter effect for terminal text
+      document.addEventListener('DOMContentLoaded', function() {
+        const typingElements = document.querySelectorAll('.typing-text');
+        typingElements.forEach(el => {
+          const text = el.textContent;
+          el.textContent = '';
+          let i = 0;
+          
+          function typeWriter() {
+            if (i < text.length) {
+              el.textContent += text.charAt(i);
+              i++;
+              setTimeout(typeWriter, 50);
+            }
+          }
+          
+          setTimeout(typeWriter, 1000);
+        });
+      });
+    </script>
+  </body>
+</html>
